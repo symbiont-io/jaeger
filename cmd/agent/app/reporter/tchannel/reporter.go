@@ -107,6 +107,11 @@ func (r *Reporter) EmitZipkinBatch(spans []*zipkincore.Span) error {
 
 // EmitBatch implements EmitBatch() of Reporter
 func (r *Reporter) EmitBatch(batch *jaeger.Batch) error {
+	if batch == nil || batch.Spans == nil {
+		r.logger.Info("SHIVER ME TIMBERS, AN EMPTY BATCH.")
+		return nil
+	}
+
 	submissionFunc := func(ctx thrift.Context) error {
 		_, err := r.jClient.SubmitBatches(ctx, []*jaeger.Batch{batch})
 		return err
